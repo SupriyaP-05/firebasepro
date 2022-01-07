@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-// import db from "./firebase";
-import database from "./config";
+import db from "./firebase";
 
 function App() {
   const [customerName, setCustomerName] = useState("");
@@ -11,33 +10,23 @@ function App() {
   const [updatedCustomerPassword, setUpdatedCustomerPassword] = useState("");
   const [dataIdToBeUpdated, setDataIdToBeUpdated] = useState("");
 
-  const [name, setName] = useState<string>();
-  const [age, setAge] = useState<string>();
-
-  const Push = () => {
-    database.ref("user").set({
-      name: name,
-      age: age,
-    }).catch(alert);
-  }
-
   useEffect(() => {
-    // db.collection("customersData").onSnapshot((snapshot) => {
-    //   setCustomersData(
-    //     snapshot.docs.map((doc) => ({
-    //       id: doc.id,
-    //       data: doc.data(),
-    //     }))
-    //   );
-    // });
+    db.collection("customersData").onSnapshot((snapshot) => {
+      setCustomersData(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      );
+    });
   }, []);
 
   const submit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    // db.collection("customersData").add({
-    //   name: customerName,
-    //   password: customerPassword,
-    // });
+    db.collection("customersData").add({
+      name: customerName,
+      password: customerPassword,
+    });
 
     setCustomerName("");
     setCustomerPassword("");
@@ -45,10 +34,10 @@ function App() {
 
   const updateData = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    // db.collection("customersData").doc(dataIdToBeUpdated).update({
-    //   name: updatedCustomerName,
-    //   password: updatedCustomerPassword,
-    // });
+    db.collection("customersData").doc(dataIdToBeUpdated).update({
+      name: updatedCustomerName,
+      password: updatedCustomerPassword,
+    });
 
     setUpdatedCustomerPassword("");
     setUpdatedCustomerName("");
@@ -56,7 +45,7 @@ function App() {
   };
 
   const deleteData = (id: string | undefined) => {
-    // db.collection("customersData").doc(id).delete();
+    db.collection("customersData").doc(id).delete();
   };
 
   return (
@@ -131,15 +120,6 @@ function App() {
             </tr>
           ))}
         </table>
-      </div>
-      <div className="App" style={{ marginTop: 250 }}>
-          <input placeholder="Enter your name" value={name}
-            onChange={(e) => setName(e.target.value)} />
-          <br /><br />
-          <input placeholder="Enter your age" value={age}
-            onChange={(e) => setAge(e.target.value)} />
-          <br /><br />
-          <button onClick={Push}>PUSH</button>
       </div>
     </div>
   );
